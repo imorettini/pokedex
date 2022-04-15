@@ -33,7 +33,7 @@
       </v-container>
     </v-container>
     <v-dialog v-model="show_dialog" width="800">
-      <v-card v-if="selected_pokemon">
+      <v-card v-if="selected_pokemon" class="px-4">
         <v-container>
           <v-row class="d-flex align-center">
             <v-col cols="4">
@@ -45,11 +45,41 @@
             </v-col>
             <v-col cols="8">
               <h1>{{ get_name(selected_pokemon) }}</h1>
+              <v-chip
+                label
+                class="mr-2"
+                v-for="type in selected_pokemon.types"
+                :key="type.slot"
+                >{{ type.type.name }}</v-chip
+              >
+              <v-divider class="my-4"></v-divider>
               <v-chip>Altura: {{ selected_pokemon.height * 2.54 }}cm</v-chip>
-              <v-chip class="ml-2">Peso: {{ (selected_pokemon.weight * 0.45359237).toFixed(0) }}kg</v-chip>
+              <v-chip class="ml-2"
+                >Peso:
+                {{
+                  (selected_pokemon.weight * 0.45359237).toFixed(0)
+                }}kg</v-chip
+              >
             </v-col>
           </v-row>
-          {{ selected_pokemon }}
+          <h2>Moves</h2>
+          <v-simple-table>
+            <thead>
+              <tr>
+                <th class="text-left">Level</th>
+                <th class="text-left">Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="item in filter_moves(selected_pokemon)"
+                :key="item.move.name"
+              >
+                <td>0</td>
+                <td>{{ item.move.name }}</td>
+              </tr>
+            </tbody>
+          </v-simple-table>
         </v-container>
       </v-card>
     </v-dialog>
@@ -94,6 +124,14 @@ export default {
         this.show_dialog = !this.show_dialog;
       });
     },
+    filter_moves(pokemon) {
+      return pokemon.moves.filter((item) => {
+        // let include = false;
+        for (let version of item.version_group_details) {
+          console.log(version);
+        }
+      });
+    },
   },
   computed: {
     filtered_pokemons() {
@@ -107,8 +145,16 @@ export default {
 
 <style>
 #app {
-background: rgb(183,171,197);
-background: linear-gradient(90deg, rgba(183,171,197,1) 0%, rgba(166,168,216,1) 21%, rgba(164,231,162,1) 48%, rgba(231,233,158,1) 66%, rgba(233,194,153,1) 87%, rgba(233,148,148,1) 100%);
+  background: rgb(183, 171, 197);
+  background: linear-gradient(
+    90deg,
+    rgba(183, 171, 197, 1) 0%,
+    rgba(166, 168, 216, 1) 21%,
+    rgba(164, 231, 162, 1) 48%,
+    rgba(231, 233, 158, 1) 66%,
+    rgba(233, 194, 153, 1) 87%,
+    rgba(233, 148, 148, 1) 100%
+  );
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
