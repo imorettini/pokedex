@@ -2,6 +2,22 @@
   <v-app>
     <v-container>
       <v-container>
+        <v-row>
+          <v-container>
+            <v-img
+              :src="require('./assets/pokedex.png')"
+              class="my-3"
+              contain
+              height="200"
+            />
+           <v-img
+              :src="require('./assets/pokedex_logo.png')"
+              class="my-3"
+              contain
+              height="150"
+            />
+          </v-container>
+        </v-row>
         <v-text-field
           v-model="search"
           label="Pesquisar"
@@ -75,7 +91,7 @@
                 v-for="item in filter_moves(selected_pokemon)"
                 :key="item.move.name"
               >
-                <td>0</td>
+                <td>{{ get_move_level(item) }}</td>
                 <td>{{ item.move.name }}</td>
               </tr>
             </tbody>
@@ -124,12 +140,30 @@ export default {
         this.show_dialog = !this.show_dialog;
       });
     },
+
+    get_move_level(move) {
+      for (let version of move.version_group_details) {
+        if (
+          version.version_group.name == "sword-shield" &&
+          version.move_learn_method.name == "level-up"
+        ) {
+          return version.level_learned_at;
+        }
+      }
+    },
+
     filter_moves(pokemon) {
       return pokemon.moves.filter((item) => {
-        // let include = false;
+        let include = false;
         for (let version of item.version_group_details) {
-          console.log(version);
+          if (
+            version.version_group.name == "sword-shield" &&
+            version.move_learn_method.name == "level-up"
+          ) {
+            include = true;
+          }
         }
+        return include;
       });
     },
   },
